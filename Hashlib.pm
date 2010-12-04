@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-# Hashlib.pm - A truely proper interface to most Digest:: modules.
-# Copyright 2010 Alexandria Wolcott
+# Hashlib.pm - A proper interface to most useful modules in the Digest namespace.
+# Copyright 2010 Alexandria Wolcott <alyx@woomoo.org>
 
 # To appease PerlCritic:
 #   $Id$ $Revision$ $HeadURL$ $Date$ $Source$
@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Carp qw(croak carp);
 
-our $VERSION = 0.90;
+our $VERSION = 0.96;
 
 sub new {
     my $class = shift;
@@ -20,6 +20,29 @@ sub new {
 }
 
 # Hashing subroutines
+
+sub adler32 {
+    my @parv = @_;
+    my $data;
+    if ( !$parv[1] ) {
+        croak( __PACKAGE__ . '::adler32: Missing required paramaters' );
+    }
+    if ( !$parv[2] ) {
+        $data = $parv[1];
+    }
+    else { $data = $parv[2]; }
+    eval { require Digest::Adler32 } or croak('Missing Digest::Adler32');
+
+    my $hash = Digest::Adler32->new;
+    $hash->add($data);
+
+    my $out = {
+        bin  => $hash->digest,
+        hex  => $hash->hexdigest,
+        base => $hash->b64digest
+    };
+    return $out;
+}
 
 sub blake {
     my ( $self, $size, $data ) = @_;
@@ -53,6 +76,22 @@ sub bmw {
     return $out;
 }
 
+sub cubehash {
+    my ( $self, $size, $data ) = @_;
+    if ( ( !$size ) or ( !$data ) ) {
+        croak( __PACKAGE__ . '::cubehash: Missing required paramaters' );
+    }
+    eval { require Digest::CubeHash } or croak('Missing Digest::CubeHash');
+    my $hash = Digest::CubeHash->new($size);
+    $hash->add($data);
+    my $out = {
+        bin  => $hash->digest,
+        hex  => $hash->hexdigest,
+        base => $hash->b64digest
+    };
+    return $out;
+}
+
 sub echo {
     my ( $self, $size, $data ) = @_;
     if ( ( !$size ) or ( !$data ) ) {
@@ -69,6 +108,22 @@ sub echo {
     return $out;
 }
 
+sub edonr {
+    my ( $self, $size, $data ) = @_;
+    if ( ( !$size ) or ( !$data ) ) {
+        croak( __PACKAGE__ . '::EdonR: Missing required paramaters' );
+    }
+    eval { require Digest::EdonR } or croak('Missing Digest::ECHO');
+    my $hash = Digest::EdonR->new($size);
+    $hash->add($data);
+    my $out = {
+        bin  => $hash->digest,
+        hex  => $hash->hexdigest,
+        base => $hash->b64digest
+    };
+    return $out;
+}
+
 sub fugue {
     my ( $self, $size, $data ) = @_;
     if ( ( !$size ) or ( !$data ) ) {
@@ -76,6 +131,22 @@ sub fugue {
     }
     eval { require Digest::Fugue } or croak('Missing Digest::Fugue');
     my $hash = Digest::Fugue->new($size);
+    $hash->add($data);
+    my $out = {
+        bin  => $hash->digest,
+        hex  => $hash->hexdigest,
+        base => $hash->b64digest
+    };
+    return $out;
+}
+
+sub gost {
+    my ( $self, $size, $data ) = @_;
+    if ( ( !$size ) or ( !$data ) ) {
+        croak( __PACKAGE__ . '::gost: Missing required paramaters' );
+    }
+    eval { require Digest::GOST } or croak('Missing Digest::GOST');
+    my $hash = Digest::GOST::new($size);
     $hash->add($data);
     my $out = {
         bin  => $hash->digest,
@@ -154,7 +225,7 @@ sub luffa {
     if ( ( !$size ) or ( !$data ) ) {
         croak( __PACKAGE__ . '::Luffa: Missing required paramaters' );
     }
-    eval { require Digest::JH } or croak('Missing Digest::Luffa');
+    eval { require Digest::Luffa } or croak('Missing Digest::Luffa');
     my $hash = Digest::Luffa->new($size);
     $hash->add($data);
     my $out = {
@@ -197,13 +268,66 @@ sub simd {
     return $out;
 }
 
+sub skein {
+    my ( $self, $size, $data ) = @_;
+    if ( ( !$size ) or ( !$data ) ) {
+        croak( __PACKAGE__ . '::skein: Missing required paramaters' );
+    }
+    eval { require Digest::Skein } or croak('Missing Digest::Skein');
+    my $hash = Digest::Skein->new($size);
+    $hash->add($data);
+    my $out = {
+        bin  => $hash->digest,
+        hex  => $hash->hexdigest,
+        base => $hash->b64digest
+    };
+    return $out;
+}
+
+sub sha2 {
+    my ( $self, $size, $data ) = @_;
+    if ( ( !$size ) or ( !$data ) ) {
+        croak( __PACKAGE__ . '::SHA2: Missing required paramaters' );
+    }
+    eval { require Digest::SHA2 } or croak('Missing Digest::SHA2');
+    my $hash = Digest::SHA2->new($size);
+    $hash->add($data);
+    my $out = {
+        bin  => $hash->digest,
+        hex  => $hash->hexdigest,
+        base => $hash->b64digest
+    };
+    return $out;
+}
+
 sub shabal {
     my ( $self, $size, $data ) = @_;
     if ( ( !$size ) or ( !$data ) ) {
         croak( __PACKAGE__ . '::Shabal: Missing required paramaters' );
     }
-    eval { use Digest::Shabal } or croak('Missing Digest::Shabal');
+    eval { require Digest::Shabal } or croak('Missing Digest::Shabal');
     my $hash = Digest::Shabal->new($size);
+    $hash->add($data);
+    my $out = {
+        bin  => $hash->digest,
+        hex  => $hash->hexdigest,
+        base => $hash->b64digest
+    };
+    return $out;
+}
+
+sub whirlpool {
+    my @parv = @_;
+    my $data;
+    if ( !$parv[1] ) {
+        croak( __PACKAGE__ . '::whirlpool: Missing required paramaters' );
+    }
+    if ( !$parv[2] ) {
+        $data = $parv[1];
+    }
+    else { $data = $parv[2]; }
+    eval { require Digest } or croak('Missing Digest');
+    my $hash = Digest->new( 'Whirlpool' );
     $hash->add($data);
     my $out = {
         bin  => $hash->digest,
