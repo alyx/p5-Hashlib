@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use Hashlib;
-my @hashes = ( 'adler32', 'blake', 'bmw', 'cubehash', 'echo', 'edonr',
+my @hashes = ( 'adler32', 'blake', 'bmw', 'echo', 'edonr',
                 'fugue', 'gost', 'groestl', 'hamsi', 'jh', 'keccak', 'luffa',
                 'sha2', 'shabal', 'shavite', 'simd', 'skein', 'whirlpool' );
 my $hash = Hashlib->new();
