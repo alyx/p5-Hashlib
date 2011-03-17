@@ -76,22 +76,6 @@ sub bmw {
     return $out;
 }
 
-sub cubehash {
-    my ( $self, $size, $data ) = @_;
-    if ( ( !$size ) or ( !$data ) ) {
-        croak( __PACKAGE__ . '::cubehash: Missing required paramaters' );
-    }
-    eval { require Digest::CubeHash } or croak('Missing Digest::CubeHash');
-    my $hash = Digest::CubeHash->new($size);
-    $hash->add($data);
-    my $out = {
-        bin  => $hash->digest,
-        hex  => $hash->hexdigest,
-        base => $hash->b64digest
-    };
-    return $out;
-}
-
 sub echo {
     my ( $self, $size, $data ) = @_;
     if ( ( !$size ) or ( !$data ) ) {
